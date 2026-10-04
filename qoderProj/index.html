@@ -43,6 +43,11 @@
                         开始大衍筮法
                         <span>🌟</span>
                     </button>
+
+                    <div class="setup-extra">
+                        <button class="ghost-btn" onclick="toggleHistory()">📚 历史记录</button>
+                        <span class="h5-hint">记录保存在本机浏览器，不会上传</span>
+                    </div>
                 </div>
             </section>
 
@@ -176,6 +181,15 @@
                     <div class="action-buttons">
                         <button class="primary-btn" onclick="resetDivination()">再次占卜</button>
                     </div>
+
+                    <!-- 导出 / 打印 / 历史（纯前端，无需后端） -->
+                    <div class="action-buttons secondary">
+                        <button class="ghost-btn" onclick="exportCurrent('html')">📄 导出 HTML</button>
+                        <button class="ghost-btn" onclick="exportCurrent('json')">🧾 导出 JSON</button>
+                        <button class="ghost-btn" onclick="exportCurrent('csv')">📊 导出 CSV</button>
+                        <button class="ghost-btn" onclick="printCurrent()">🖨️ 打印 / 存为 PDF</button>
+                        <button class="ghost-btn" onclick="toggleHistory()">📚 历史记录</button>
+                    </div>
                 </div>
             </section>
         </main>
@@ -188,12 +202,31 @@
     </div>
 
     <!-- JavaScript文件 -->
+    <!-- GuaDatabase_V3.0.data.js 由 build_h5_data.py 生成，以 <script> 内联注入卦象详注，
+         使 file:// 双击打开时也能拿到完整的 386 爻数据（fetch 在 file:// 下会被 CORS 拦截） -->
     <script src="hexagram-database.js?v=7"></script>
+    <script src="GuaDatabase_V3.0.data.js?v=7"></script>
     <script src="gua-data-json.js?v=7"></script>
     <script src="dayansifa-core.js?v=7"></script>
     <script src="app.js?v=7"></script>
+    <script src="h5-extras.js?v=7"></script>
 
     <!-- 爻线悬停爻辞浮层 -->
     <div class="yao-tooltip" id="yao-tooltip" style="display: none;"></div>
+
+    <!-- 本地历史记录弹窗（纯 H5，数据存于 localStorage） -->
+    <div class="h5-modal" id="history-modal" style="display: none;">
+        <div class="h5-modal-box">
+            <div class="h5-modal-head">
+                <h3>📚 占卜历史（本机保存）</h3>
+                <div class="h5-modal-tools">
+                    <button class="ghost-btn" onclick="exportHistoryJson()">导出 JSON</button>
+                    <button class="ghost-btn danger" onclick="clearHistory()">清空</button>
+                    <button class="ghost-btn" onclick="closeHistory()">✕ 关闭</button>
+                </div>
+            </div>
+            <div class="h5-history-list" id="history-list"></div>
+        </div>
+    </div>
 </body>
 </html>

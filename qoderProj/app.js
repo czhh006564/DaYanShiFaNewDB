@@ -6,6 +6,7 @@
 // 全局变量
 let currentHexagram = null;
 let currentAnalysis = null;
+let currentQuestion = '';   // 本次占卜的问题，供历史记录与导出使用
 let isInProgress = false;
 
 /**
@@ -149,6 +150,7 @@ async function performDivination(question) {
     
     // 分析卦象
     currentAnalysis = daYanShiFa.analyzeHexagram(currentHexagram);
+    currentQuestion = question || '';
 
     // 数据保险：若拿到的是回落精简数据而 JSON 已就绪，则以 GuaDatabase_V3.0.json 重取卦层信息
     if (typeof GuaJson !== 'undefined' && GuaJson.ready &&
@@ -238,6 +240,9 @@ function showResult(question) {
     // 构建本/互/变/综/错 五个视角，默认进入「本卦 = 现在」
     buildViews();
     switchView('ben');
+
+    // 纯 H5：把本次结果保存到浏览器本地历史（h5-extras.js）
+    if (typeof saveCurrentToHistory === 'function') saveCurrentToHistory(question);
 }
 
 /* ================= 五重卦象视角：本卦 / 互卦 / 变卦 / 综卦 / 错卦 ================= */
@@ -828,6 +833,7 @@ function resetDivination() {
     isInProgress = false;
     currentHexagram = null;
     currentAnalysis = null;
+    currentQuestion = '';
     currentViews = {};
     currentViewKey = 'ben';
     hideYaoTooltip();

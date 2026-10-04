@@ -56,15 +56,36 @@ const GuaJson = {
     raw: [],
     ready: false,
     error: null,
+    source: null,          // 'inline' | 'fetch' —— 数据来源，便于排查
     bySeq: {},
     byTrigram: {},
     byName: {},
     codeToSeq: {},
 
-    /** 加载 JSON 并构建索引（可重复调用，已加载则直接返回） */
+    /**
+     * 加载并构建索引（可重复调用，已加载则直接返回）
+     *
+     * 优先使用 window.GUA_DATABASE_V3（由 GuaDatabase_V3.0.data.js 以 <script>
+     * 注入）。原因：file:// 协议下 fetch() 本地文件会被浏览器 CORS 拦截，而
+     * <script> 标签不受该限制，这是纯 H5 离线版唯一可行的取数方式。
+     * 未注入内联数据时（如 HTTP 静态托管且未引入数据脚本）仍回退到 fetch。
+     */
     async load(url) {
         if (this.ready) return true;
         if (url) this.url = url;
+
+        const inline = (typeof window !== 'undefined') ? window.GUA_DATABASE_V3 : null;
+        if (Array.isArray(inline) && inline.length > 0) {
+            try {
+                this._build(inline);
+                this.ready = true;
+                this.source = 'inline';
+                return true;
+            } catch (e) {
+                console.warn('[GuaJson] inline data invalid: ' + (e.message || e) + ', falling back to fetch');
+            }
+        }
+
         try {
             const resp = await fetch(this.url, { cache: 'no-cache' });
             if (!resp.ok) throw new Error('HTTP ' + resp.status);
@@ -72,6 +93,7 @@ const GuaJson = {
             if (!Array.isArray(data) || data.length === 0) throw new Error('数据为空');
             this._build(data);
             this.ready = true;
+            this.source = 'fetch';
             return true;
         } catch (e) {
             this.error = e.message || String(e);
