@@ -1,0 +1,89 @@
+services:
+  # 方式1：直接使用Python镜像运行（推荐，无需构建）
+  dayansifa-web:
+    image: python:3.9-slim
+    container_name: dayansifa-web
+    ports:
+      - "8081:8080"  # 使用8081端口避免冲突
+    environment:
+      - DAYANSIFA_ENV=production
+      - DAYANSIFA_WEB_SERVER_HOST=0.0.0.0
+      - DAYANSIFA_WEB_SERVER_PORT=8080
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - .:/app  # 直接挂载当前目录
+      - dayansifa_data:/app/data
+      - dayansifa_logs:/app/logs
+      - dayansifa_exports:/app/exports
+    working_dir: /app
+    command: python webserver_v2.py --host=0.0.0.0 --port=8080
+    restart: unless-stopped
+    networks:
+      - dayansifa-network
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/api/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # 方式2：使用离线版Dockerfile构建（可选）
+  dayansifa-web-build:
+    build: 
+      context: .
+      dockerfile: Dockerfile.offline
+    container_name: dayansifa-web-build
+    ports:
+      - "8082:8080"
+    environment:
+      - DAYANSIFA_ENV=production
+      - DAYANSIFA_WEB_SERVER_HOST=0.0.0.0
+      - DAYANSIFA_WEB_SERVER_PORT=8080
+      - DAYANSIFA_ENABLE_CACHE=true
+      - DAYANSIFA_LOG_LEVEL=INFO
+    volumes:
+      - dayansifa_data:/app/data
+      - dayansifa_logs:/app/logs
+      - dayansifa_exports:/app/exports
+    restart: unless-stopped
+    networks:
+      - dayansifa-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/api/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    profiles:
+      - "build"  # 默认不启动，需要指定profile
+
+  # 可选：添加 nginx 反向代理
+  nginx:
+    image: nginx:alpine
+    container_name: dayansifa-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - dayansifa-web
+    restart: unless-stopped
+    networks:
+      - dayansifa-network
+    profiles:
+      - "production"
+
+volumes:
+  dayansifa_data:
+    driver: local
+  dayansifa_logs:
+    driver: local
+  dayansifa_exports:
+    driver: local
+
+networks:
+  dayansifa-network:
+    driver: bridge

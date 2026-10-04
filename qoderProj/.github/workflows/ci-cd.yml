@@ -1,0 +1,227 @@
+name: 大衍筮法 CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  PYTHON_VERSION: '3.9'
+  NODE_VERSION: '16'
+
+jobs:
+  # 代码质量检查
+  lint:
+    name: 代码质量检查
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: 设置 Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    
+    - name: 安装依赖
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 black mypy
+        pip install -r requirements.txt
+    
+    - name: 代码格式检查
+      run: |
+        black --check .
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+    
+    - name: 类型检查
+      run: |
+        mypy *.py --ignore-missing-imports
+
+  # 单元测试
+  test:
+    name: 单元测试
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.9', '3.10', '3.11']
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: 设置 Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: 安装依赖
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-cov
+        pip install -r requirements.txt
+    
+    - name: 运行测试
+      run: |
+        python -m pytest test_comprehensive.py -v --cov=. --cov-report=xml
+    
+    - name: 上传测试覆盖率
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+
+  # 功能测试
+  integration-test:
+    name: 集成测试
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: 设置 Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    
+    - name: 安装依赖
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: 运行验证脚本
+      run: python verify.py
+    
+    - name: 测试命令行版本
+      run: |
+        timeout 10s python dayansifa_v2.py || true
+    
+    - name: 测试Web版本
+      run: |
+        python webserver_v2.py --no-browser &
+        sleep 5
+        curl -f http://localhost:8080/api/health || exit 1
+        pkill -f webserver_v2.py
+
+  # Docker构建
+  docker-build:
+    name: Docker构建
+    runs-on: ubuntu-latest
+    needs: [integration-test]
+    if: github.event_name == 'push'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: 设置 Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    
+    - name: 登录 Docker Hub
+      if: github.event_name != 'pull_request'
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    
+    - name: 提取元数据
+      id: meta
+      uses: docker/metadata-action@v4
+      with:
+        images: dayansifa/dayansifa
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+    
+    - name: 构建并推送
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        platforms: linux/amd64,linux/arm64
+        push: ${{ github.event_name != 'pull_request' }}
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+  # 安全扫描
+  security-scan:
+    name: 安全扫描
+    runs-on: ubuntu-latest
+    needs: [docker-build]
+    if: github.event_name == 'push'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: 运行 Trivy 漏洞扫描
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'dayansifa/dayansifa:latest'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+    
+    - name: 上传 Trivy 扫描结果
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+  # 部署到测试环境
+  deploy-staging:
+    name: 部署到测试环境
+    runs-on: ubuntu-latest
+    needs: [docker-build, security-scan]
+    if: github.ref == 'refs/heads/develop'
+    environment: staging
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: 部署到测试环境
+      run: |
+        echo "部署到测试环境..."
+        # 这里可以添加实际的部署脚本
+        # 例如：ssh 到服务器，拉取新镜像，重启服务等
+
+  # 部署到生产环境
+  deploy-production:
+    name: 部署到生产环境
+    runs-on: ubuntu-latest
+    needs: [docker-build, security-scan]
+    if: startsWith(github.ref, 'refs/tags/v')
+    environment: production
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: 部署到生产环境
+      run: |
+        echo "部署到生产环境..."
+        # 这里可以添加实际的生产部署脚本
+
+  # 发布 GitHub Release
+  release:
+    name: 创建发布
+    runs-on: ubuntu-latest
+    needs: [deploy-production]
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: 创建发布包
+      run: |
+        zip -r dayansifa-${GITHUB_REF#refs/tags/}.zip . \
+          -x "*.git*" "*.github*" "__pycache__*" "*.pyc" "logs/*" "data/*" "exports/*"
+    
+    - name: 创建 GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: dayansifa-*.zip
+        generate_release_notes: true
+        draft: false
+        prerelease: false

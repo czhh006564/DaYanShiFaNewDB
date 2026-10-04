@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大衍筮法 - 数字化周易占卜</title>
+    <link rel="stylesheet" href="styles.css?v=7">
+</head>
+<body>
+    <!-- 背景装饰 -->
+    <div class="background-decoration">
+        <div class="cloud cloud1"></div>
+        <div class="cloud cloud2"></div>
+        <div class="cloud cloud3"></div>
+    </div>
+
+    <!-- 主容器 -->
+    <div class="container">
+        <!-- 页面标题 -->
+        <header class="header">
+            <h1 class="title">
+                <span class="title-main">大衍筮法</span>
+                <span class="title-sub">数字化周易占卜</span>
+            </h1>
+            <p class="motto">"大衍之数五十，其用四九"</p>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <main class="main-content">
+            <!-- 占卜准备区域 -->
+            <section class="divination-setup" id="divination-setup">
+                <div class="setup-card">
+                    <h2>🧘‍♀️ 占卜准备</h2>
+                    <p class="instruction">请静心思考您要占卜的问题，然后点击下方按钮开始筮法...</p>
+                    
+                    <div class="question-input">
+                        <label for="question">您的问题（可选）：</label>
+                        <textarea id="question" placeholder="请在此输入您要占卜的问题..."></textarea>
+                    </div>
+                    
+                    <button class="start-btn" onclick="startDivination()">
+                        <span>🌟</span>
+                        开始大衍筮法
+                        <span>🌟</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- 占卜过程显示区域 -->
+            <section class="divination-process" id="divination-process" style="display: none;">
+                <div class="process-card">
+                    <h2>⚡ 筮法进行中</h2>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                        <div class="progress-text" id="progress-text">准备开始...</div>
+                    </div>
+                    
+                    <!-- 蓍草动画显示 -->
+                    <div class="yarrow-animation" id="yarrow-animation">
+                        <div class="yarrow-sticks" id="yarrow-sticks"></div>
+                        <div class="yarrow-info" id="yarrow-info"></div>
+                    </div>
+                    
+                    <!-- 爻的生成过程 -->
+                    <div class="yao-generation" id="yao-generation">
+                        <h3>爻的生成过程</h3>
+                        <div class="yao-list" id="yao-list"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 卦象结果显示区域 -->
+            <section class="hexagram-result" id="hexagram-result" style="display: none;">
+                <div class="result-card">
+                    <h2 id="result-title">🔮 卦象结果</h2>
+
+                    <!-- 五重卦象视角 -->
+                    <nav class="view-nav" id="view-nav">
+                        <button class="view-btn active" id="viewbtn-ben" onclick="switchView('ben')">
+                            <span class="vb-name">本卦</span><span class="vb-desc">现在</span>
+                        </button>
+                        <button class="view-btn" id="viewbtn-hu" onclick="switchView('hu')">
+                            <span class="vb-name">互卦</span><span class="vb-desc">内情过程</span>
+                        </button>
+                        <button class="view-btn" id="viewbtn-bian" onclick="switchView('bian')">
+                            <span class="vb-name">变卦</span><span class="vb-desc">结局走向</span>
+                        </button>
+                        <button class="view-btn" id="viewbtn-zong" onclick="switchView('zong')">
+                            <span class="vb-name">综卦</span><span class="vb-desc">反过来，对立面视角</span>
+                        </button>
+                        <button class="view-btn" id="viewbtn-cuo" onclick="switchView('cuo')">
+                            <span class="vb-name">错卦</span><span class="vb-desc">性质完全相反</span>
+                        </button>
+                    </nav>
+                    <p class="view-note" id="view-note"></p>
+
+                    <div class="result-layout">
+                        <!-- 左栏：卦象本体 -->
+                        <aside class="gua-aside">
+                            <div class="hexagram-visual" id="hexagram-visual"></div>
+                            <h3 id="hexagram-name">卦名加载中...</h3>
+                            <div id="hexagram-symbol" class="hexagram-symbol"></div>
+
+                            <div class="trigram-info">
+                                <div class="trigram">
+                                    <span>上卦：</span>
+                                    <span id="upper-trigram">-</span>
+                                    <span id="upper-symbol">-</span>
+                                </div>
+                                <div class="trigram">
+                                    <span>下卦：</span>
+                                    <span id="lower-trigram">-</span>
+                                    <span id="lower-symbol">-</span>
+                                </div>
+                            </div>
+
+                            <div class="gua-meta">
+                                <p>卦序：<span id="gua-number">-</span></p>
+                                <p id="related-gua">—</p>
+                            </div>
+                        </aside>
+
+                        <!-- 右栏：分区内容，平铺不截断 -->
+                        <div class="result-main">
+                            <nav class="tabs">
+                                <button class="tab-btn active" id="tabbtn-summary" onclick="switchTab('summary')">📜 总览</button>
+                                <button class="tab-btn" id="tabbtn-yao" onclick="switchTab('yao')">📖 六爻爻辞</button>
+                                <button class="tab-btn" id="tabbtn-change" onclick="switchTab('change')">⚡ 变爻详解</button>
+                                <button class="tab-btn" id="tabbtn-extra" onclick="switchTab('extra')">🧩 组成与建议</button>
+                            </nav>
+
+                            <!-- 总览：卦辞 / 彖传 / 象辞 -->
+                            <div class="tab-panel active" id="panel-summary">
+                                <div class="explanation-section">
+                                    <h4>📜 卦辞</h4>
+                                    <p id="gua-ci">加载中...</p>
+                                </div>
+                                <div class="explanation-section">
+                                    <h4>🎯 彖传</h4>
+                                    <p id="judgment">加载中...</p>
+                                </div>
+                                <div class="explanation-section">
+                                    <h4>🖼️ 象辞</h4>
+                                    <p id="image">加载中...</p>
+                                </div>
+                            </div>
+
+                            <!-- 六爻爻辞：386 爻完整详注 -->
+                            <div class="tab-panel" id="panel-yao">
+                                <div id="yao-ci-list" class="yao-ci-list"></div>
+                            </div>
+
+                            <!-- 变爻详解 -->
+                            <div class="tab-panel" id="panel-change">
+                                <p id="changing-yaos" class="changing-summary">无变爻</p>
+                                <div id="changing-detail" class="changing-detail"></div>
+                            </div>
+
+                            <!-- 组成与建议 -->
+                            <div class="tab-panel" id="panel-extra">
+                                <div class="detail-section">
+                                    <h3>卦象组成</h3>
+                                    <div id="composition-details"></div>
+                                </div>
+                                <div class="detail-section">
+                                    <h3>占卜建议</h3>
+                                    <div id="advice-details"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 操作按钮 -->
+                    <div class="action-buttons">
+                        <button class="primary-btn" onclick="resetDivination()">再次占卜</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p>📚 本程序仅供学习和娱乐使用，具体卦象解释请参考《易经》相关典籍</p>
+            <p>🙏 传承中华优秀传统文化，理性对待占卜结果</p>
+        </footer>
+    </div>
+
+    <!-- JavaScript文件 -->
+    <script src="hexagram-database.js?v=7"></script>
+    <script src="gua-data-json.js?v=7"></script>
+    <script src="dayansifa-core.js?v=7"></script>
+    <script src="app.js?v=7"></script>
+
+    <!-- 爻线悬停爻辞浮层 -->
+    <div class="yao-tooltip" id="yao-tooltip" style="display: none;"></div>
+</body>
+</html>

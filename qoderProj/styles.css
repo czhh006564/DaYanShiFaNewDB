@@ -1,0 +1,925 @@
+/* 大衍筮法 Web 界面样式 */
+
+/* 全局样式重置和字体 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Microsoft YaHei', 'SimHei', 'STHeiti', sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: #d4af37;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* 背景装饰云朵 */
+.background-decoration {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.cloud {
+    position: absolute;
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 50px;
+    opacity: 0.3;
+    animation: float 20s infinite linear;
+}
+
+.cloud1 {
+    width: 100px;
+    height: 40px;
+    top: 20%;
+    left: -10%;
+    animation-duration: 25s;
+}
+
+.cloud2 {
+    width: 150px;
+    height: 60px;
+    top: 60%;
+    left: -15%;
+    animation-duration: 30s;
+}
+
+.cloud3 {
+    width: 120px;
+    height: 50px;
+    top: 40%;
+    left: -12%;
+    animation-duration: 35s;
+}
+
+@keyframes float {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(calc(100vw + 200px));
+    }
+}
+
+/* 主容器 */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+/* 页面标题 */
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 40px 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    border: 2px solid rgba(212, 175, 55, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.title {
+    margin-bottom: 20px;
+}
+
+.title-main {
+    display: block;
+    font-size: 3.5rem;
+    font-weight: 700;
+    background: linear-gradient(45deg, #d4af37, #ffd700, #d4af37);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+    margin-bottom: 10px;
+}
+
+.title-sub {
+    display: block;
+    font-size: 1.5rem;
+    color: #b8860b;
+    letter-spacing: 3px;
+}
+
+.motto {
+    font-size: 1.2rem;
+    color: #daa520;
+    font-style: italic;
+    opacity: 0.8;
+}
+
+/* 主要内容区域 */
+.main-content {
+    min-height: 60vh;
+}
+
+/* 卡片通用样式 */
+.setup-card, .process-card, .result-card {
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 20px;
+    padding: 40px;
+    margin-bottom: 30px;
+    border: 2px solid rgba(212, 175, 55, 0.2);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.setup-card h2, .process-card h2, .result-card h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: #d4af37;
+}
+
+/* 占卜准备区域 */
+.instruction {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    color: #daa520;
+    line-height: 1.6;
+}
+
+.question-input {
+    margin-bottom: 40px;
+}
+
+.question-input label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    color: #d4af37;
+}
+
+.question-input textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 15px;
+    border: 2px solid rgba(212, 175, 55, 0.3);
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    color: #d4af37;
+    font-family: inherit;
+    font-size: 1rem;
+    resize: vertical;
+    transition: all 0.3s ease;
+}
+
+.question-input textarea:focus {
+    outline: none;
+    border-color: #d4af37;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+}
+
+.question-input textarea::placeholder {
+    color: rgba(212, 175, 55, 0.6);
+}
+
+/* 按钮样式 */
+.start-btn, .primary-btn, .secondary-btn {
+    padding: 15px 40px;
+    border: none;
+    border-radius: 50px;
+    font-family: inherit;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: none;
+    letter-spacing: 1px;
+}
+
+.start-btn {
+    display: block;
+    margin: 0 auto;
+    background: linear-gradient(45deg, #d4af37, #ffd700);
+    color: #1a1a2e;
+    font-weight: 700;
+    box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4);
+}
+
+.start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(212, 175, 55, 0.6);
+}
+
+.primary-btn {
+    background: linear-gradient(45deg, #d4af37, #ffd700);
+    color: #1a1a2e;
+    font-weight: 600;
+}
+
+.secondary-btn {
+    background: transparent;
+    color: #d4af37;
+    border: 2px solid #d4af37;
+}
+
+.primary-btn:hover, .secondary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+}
+
+/* 进度条样式 */
+.progress-container {
+    margin-bottom: 30px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(212, 175, 55, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #d4af37, #ffd700);
+    width: 0%;
+    transition: width 0.5s ease;
+    border-radius: 4px;
+}
+
+.progress-text {
+    text-align: center;
+    color: #daa520;
+    font-size: 1.1rem;
+}
+
+/* 蓍草动画区域 */
+.yarrow-animation {
+    text-align: center;
+    margin: 30px 0;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.yarrow-sticks {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.yarrow-info {
+    color: #daa520;
+    font-size: 1.1rem;
+}
+
+/* 爻生成显示 */
+.yao-generation {
+    margin-top: 30px;
+}
+
+.yao-generation h3 {
+    text-align: center;
+    color: #d4af37;
+    margin-bottom: 20px;
+}
+
+.yao-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.yao-item {
+    background: rgba(212, 175, 55, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+    border-left: 4px solid #d4af37;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.yao-position {
+    font-weight: bold;
+    color: #d4af37;
+}
+
+.yao-process {
+    color: #daa520;
+    font-size: 0.9rem;
+}
+
+.yao-result {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* 卦象显示 */
+.hexagram-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.hexagram-visual {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 2rem;
+    text-align: center;
+}
+
+.yao-line {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    font-weight: bold;
+}
+
+.yao-line.yang {
+    color: #ffd700;
+}
+
+.yao-line.yin {
+    color: #87ceeb;
+}
+
+.yao-line.changing {
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.hexagram-info {
+    text-align: center;
+}
+
+.hexagram-info h3 {
+    font-size: 2.5rem;
+    color: #d4af37;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+}
+
+.trigram-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.trigram {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 8px;
+    font-size: 1.2rem;
+}
+
+/* 卦象解释 */
+.hexagram-explanation {
+    margin-top: 40px;
+}
+
+.explanation-section {
+    margin-bottom: 25px;
+    padding: 20px;
+    background: rgba(212, 175, 55, 0.05);
+    border-radius: 12px;
+    border-left: 4px solid #d4af37;
+}
+
+.explanation-section h4 {
+    color: #d4af37;
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+.explanation-section p {
+    color: #daa520;
+    line-height: 1.6;
+    font-size: 1.1rem;
+}
+
+/* 操作按钮组 */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+}
+
+/* 模态窗口 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: rgba(26, 26, 46, 0.95);
+    padding: 40px;
+    border-radius: 20px;
+    border: 2px solid rgba(212, 175, 55, 0.3);
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    backdrop-filter: blur(15px);
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 2rem;
+    color: #d4af37;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close:hover {
+    color: #ffd700;
+}
+
+.detail-section {
+    margin-bottom: 30px;
+}
+
+.detail-section h3 {
+    color: #d4af37;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
+
+/* 页脚 */
+.footer {
+    text-align: center;
+    margin-top: 60px;
+    padding: 30px;
+    border-top: 1px solid rgba(212, 175, 55, 0.2);
+    color: rgba(212, 175, 55, 0.7);
+}
+
+.footer p {
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .title-main {
+        font-size: 2.5rem;
+    }
+    
+    .title-sub {
+        font-size: 1.2rem;
+    }
+    
+    .setup-card, .process-card, .result-card {
+        padding: 25px;
+    }
+    
+    .hexagram-display {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .action-buttons button {
+        width: 200px;
+    }
+    
+    .modal-content {
+        margin: 20px;
+        padding: 25px;
+        max-height: 90vh;
+    }
+}
+
+@media (max-width: 480px) {
+    .title-main {
+        font-size: 2rem;
+    }
+    
+    .setup-card, .process-card, .result-card {
+        padding: 20px;
+    }
+    
+    .hexagram-visual {
+        font-size: 1.5rem;
+    }
+    
+    .yao-line {
+        height: 30px;
+    }
+}
+
+/* 加载动画 */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(212, 175, 55, 0.3);
+    border-radius: 50%;
+    border-top-color: #d4af37;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* 淡入动画 */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== GuaDatabase_V3.0.json 详注展示样式 ===== */
+.hexagram-symbol {
+    font-size: 3rem;
+    color: #d4af37;
+    line-height: 1.1;
+    margin: 4px 0;
+}
+
+.yao-ci-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.yao-ci-item {
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: rgba(212, 175, 55, 0.08);
+    border-left: 3px solid rgba(212, 175, 55, 0.4);
+}
+
+.yao-ci-item.changing {
+    background: rgba(255, 107, 107, 0.12);
+    border-left-color: #ff6b6b;
+}
+
+.yao-ci-title {
+    font-weight: bold;
+    color: #d4af37;
+    margin-bottom: 4px;
+}
+
+.yao-ci-text {
+    color: #f0e6d2;
+    margin-bottom: 4px;
+    line-height: 1.6;
+}
+
+.yao-ci-trans,
+.yao-ci-changed {
+    color: #daa520;
+    font-size: 0.92rem;
+    line-height: 1.6;
+}
+
+.yao-ci-changed {
+    color: #d4af37;
+    font-weight: bold;
+}
+
+.changing-detail {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.changing-item {
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: rgba(255, 107, 107, 0.1);
+}
+
+.changing-title {
+    font-weight: bold;
+    color: #d4af37;
+    margin-bottom: 4px;
+}
+
+.changing-line {
+    color: #daa520;
+    font-size: 0.92rem;
+    line-height: 1.6;
+}
+
+.changing-changed {
+    color: #d4af37;
+    font-weight: bold;
+    margin-top: 4px;
+}
+
+/* ===== 五重卦象视角切换 ===== */
+.view-nav {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.view-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 14px 8px;
+    border-radius: 14px;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    background: rgba(0, 0, 0, 0.35);
+    color: #daa520;
+    cursor: pointer;
+    transition: all 0.25s;
+}
+
+.view-btn .vb-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #d4af37;
+    letter-spacing: 2px;
+}
+
+.view-btn .vb-desc {
+    font-size: 0.78rem;
+    opacity: 0.85;
+    text-align: center;
+    line-height: 1.3;
+}
+
+.view-btn:hover {
+    border-color: #ffd700;
+    background: rgba(212, 175, 55, 0.15);
+    transform: translateY(-2px);
+}
+
+.view-btn.active {
+    border-color: #ffd700;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.35), rgba(255, 215, 0, 0.2));
+    box-shadow: 0 0 18px rgba(212, 175, 55, 0.35);
+}
+
+.view-btn.active .vb-name {
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.view-note {
+    margin-bottom: 26px;
+    color: #daa520;
+    font-size: 0.9rem;
+    opacity: 0.85;
+    text-align: center;
+    min-height: 1.2em;
+}
+
+/* ===== 爻线悬停爻辞浮层 ===== */
+.yao-tooltip {
+    position: fixed;
+    z-index: 9999;
+    max-width: 420px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: rgba(10, 10, 25, 0.97);
+    border: 1px solid rgba(212, 175, 55, 0.5);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    color: #daa520;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    pointer-events: none;
+    animation: fadeIn 0.15s ease-in;
+}
+
+.yao-tooltip .tt-title {
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 6px;
+}
+
+.yao-tooltip .tt-original {
+    color: #f0e6d2;
+    margin-bottom: 6px;
+}
+
+.yao-tooltip .tt-row {
+    margin-bottom: 4px;
+}
+
+.yao-tooltip .tt-row b {
+    color: #d4af37;
+}
+
+.yao-line {
+    cursor: pointer;
+    transition: color 0.2s, transform 0.2s;
+}
+
+.yao-line:hover {
+    color: #ffd700;
+    transform: translateX(4px);
+}
+
+@media (max-width: 900px) {
+    .view-nav {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ===== 结果区：双栏 + 标签页布局（内容平铺，不设高度上限） ===== */
+.result-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 30px;
+    align-items: start;
+}
+
+.gua-aside {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    position: sticky;
+    top: 20px;
+}
+
+.gua-aside h3 {
+    font-size: 1.6rem;
+    margin: 14px 0 4px;
+    color: #d4af37;
+}
+
+.gua-aside .hexagram-visual {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.gua-meta {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(212, 175, 55, 0.25);
+    color: #daa520;
+    font-size: 0.95rem;
+    line-height: 1.9;
+    word-break: break-all;
+}
+
+.tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+}
+
+.tab-btn {
+    background: rgba(212, 175, 55, 0.08);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    color: #daa520;
+    padding: 10px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.tab-btn:hover {
+    background: rgba(212, 175, 55, 0.18);
+    color: #ffd700;
+}
+
+.tab-btn.active {
+    background: linear-gradient(45deg, #d4af37, #ffd700);
+    color: #1a1a2e;
+    font-weight: bold;
+    border-color: #ffd700;
+}
+
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.active {
+    display: block;
+    animation: fadeIn 0.3s ease-in;
+}
+
+/* 爻卡片：完整详注平铺 */
+.yao-card {
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.yao-card.changing {
+    border-color: rgba(255, 107, 107, 0.6);
+    background: rgba(255, 107, 107, 0.08);
+}
+
+.yao-card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.yao-card-head .yao-name {
+    font-size: 1.15rem;
+    font-weight: bold;
+    color: #d4af37;
+}
+
+.yao-tag {
+    font-size: 0.78rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    color: #daa520;
+}
+
+.yao-tag.changing {
+    border-color: #ff6b6b;
+    color: #ff6b6b;
+}
+
+.yao-original {
+    color: #f0e6d2;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin-bottom: 8px;
+}
+
+.yao-row {
+    color: #daa520;
+    font-size: 0.95rem;
+    line-height: 1.75;
+    margin-bottom: 5px;
+}
+
+.yao-row b {
+    color: #d4af37;
+    font-weight: 600;
+}
+
+.changing-summary {
+    color: #daa520;
+    margin-bottom: 12px;
+}
+
+@media (max-width: 900px) {
+    .result-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .gua-aside {
+        position: static;
+    }
+}

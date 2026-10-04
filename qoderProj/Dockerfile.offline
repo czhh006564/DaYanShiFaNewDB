@@ -1,0 +1,54 @@
+# 大衍筮法程序 Docker 镜像 (离线版本)
+# 使用更小的基础镜像，减少网络依赖
+
+FROM alpine:3.18
+
+# 设置维护者信息
+LABEL maintainer="dayansifa-team"
+LABEL description="大衍筮法 - 数字化周易占卜程序 (离线版)"
+LABEL version="2.0.0"
+
+# 设置工作目录
+WORKDIR /app
+
+# 设置环境变量
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+ENV DAYANSIFA_ENV=production
+ENV DAYANSIFA_WEB_SERVER_HOST=0.0.0.0
+ENV DAYANSIFA_WEB_SERVER_PORT=8080
+
+# 安装Python和基础依赖
+RUN apk add --no-cache \
+    python3 \
+    py3-pip \
+    && ln -sf python3 /usr/bin/python \
+    && ln -sf pip3 /usr/bin/pip
+
+# 复制应用代码（仅核心文件）
+COPY *.py ./
+COPY *.js ./
+COPY *.html ./
+COPY *.css ./
+COPY README.md ./
+
+# 创建必要的目录
+RUN mkdir -p /app/logs /app/data /app/exports /app/cache
+
+# 设置权限
+RUN chmod +x *.py
+
+# 创建非root用户
+RUN adduser -D -u 1000 dayansifa && \
+    chown -R dayansifa:dayansifa /app
+USER dayansifa
+
+# 健康检查（简化版）
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD python3 -c "import socket; s=socket.socket(); s.connect(('localhost', 8080)); s.close()" || exit 1
+
+# 暴露端口
+EXPOSE 8080
+
+# 默认启动Web版本
+CMD ["python3", "webserver_v2.py", "--no-browser"]
