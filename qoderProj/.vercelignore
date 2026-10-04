@@ -1,0 +1,31 @@
+# 纯 H5 静态部署：只上传前端所需文件，避免 Vercel 误判为 Python 项目
+# （Python 版请部署为独立项目，或使用 Docker）
+
+# Python 源码与依赖
+*.py
+requirements.txt
+__pycache__/
+*.pyc
+
+# 运行时产物
+logs/
+data/
+cache/
+exports/
+
+# 部署 / 容器相关（本部署用不到）
+Dockerfile
+Dockerfile.offline
+docker-compose.yml
+nginx.conf
+*.sh
+*.bat
+
+# 未被引用的大体积数据副本（唯一数据源是 GuaDatabase_V3.0.json / .data.js）
+GuaDatabase_V3.0.md
+
+# 其他
+.git
+.github
+.gitignore
+.vercel
